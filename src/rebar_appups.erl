@@ -140,6 +140,13 @@ generate_appup_files(NewVerPath, OldVerPath, [{App, {OldVer, NewVer}}|Rest]) ->
     {AddedFiles, DeletedFiles, ChangedFiles} = beam_lib:cmp_dirs(NewEbinDir,
                                                                  OldEbinDir),
 
+    case AddedFiles of
+        error ->
+            erlang:error(ChangedFiles, []);
+        _ ->
+            ok
+    end,
+
     Added = [generate_instruction(added, File) || File <- AddedFiles],
     Deleted = [generate_instruction(deleted, File) || File <- DeletedFiles],
     Changed = [generate_instruction(changed, File) || File <- ChangedFiles],
